@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
 
      // Initialize the player
     Player player;
+    
     init_player(&player);
 
     /* Main loop */
@@ -101,8 +102,8 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Clear screen with black
         SDL_RenderClear(renderer);
         
-
         draw_map(renderer);    // Draw the map
+        //render_3d_view(renderer,&player,map);
         render_player(renderer, &player);// Draw the player
 
         render(renderer, &player, map);

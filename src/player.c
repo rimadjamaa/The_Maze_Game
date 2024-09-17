@@ -104,3 +104,62 @@ void render_player(SDL_Renderer *renderer, Player *p) {
 
 
 
+void render_3d_view(SDL_Renderer *renderer, Player *player, int map[MAP_HEIGHT][MAP_WIDTH]) {
+    int screen_width = 800; // Adjust to your screen width
+    int screen_height = 600; // Adjust to your screen height
+    int FOV = 60; // Field of View in degrees
+    int num_rays = screen_width; // Number of rays equals screen width for a 1:1 pixel ratio
+    double ray_angle_step = (double)FOV / (double)num_rays; // Angle step between each ray
+
+    double player_angle_rad = player->angle * M_PI / 180.0; // Convert player angle to radians
+
+    // Define colors for ground and ceiling
+    SDL_Color ground_color = {0, 255, 0, 255}; // Green
+    SDL_Color ceiling_color = {0, 0, 255, 255}; // Blue
+
+    int i;
+    for (i = 0; i < num_rays; i++) {
+        double ray_angle = (player->angle - FOV / 2.0) + i * ray_angle_step;
+        double ray_angle_rad = ray_angle * M_PI / 180.0;
+
+        double ray_x = player->x;
+        double ray_y = player->y;
+        double distance_to_wall = 0;
+
+        while (1) {
+            ray_x += cos(ray_angle_rad);
+            ray_y += sin(ray_angle_rad);
+            distance_to_wall += 1;
+
+            int map_x = (int)(ray_x / TILE_SIZE);
+            int map_y = (int)(ray_y / TILE_SIZE);
+
+            // Check if ray hit a wall
+            if (map[map_y][map_x] != 0) {
+                break;
+            }
+        }
+
+        // Correct fish-eye effect
+        double perpendicular_distance = distance_to_wall * cos(ray_angle_rad - player_angle_rad);
+
+        // Calculate height of the wall slice to draw
+        int wall_height = (int)(screen_height / perpendicular_distance);
+
+        // Determine start and end of the wall slice on the screen
+        int wall_start = (screen_height / 2) - (wall_height / 2);
+        int wall_end = wall_start + wall_height;
+
+        // Draw ceiling
+        SDL_SetRenderDrawColor(renderer, ceiling_color.r, ceiling_color.g, ceiling_color.b, ceiling_color.a);
+        SDL_RenderDrawLine(renderer, i, 0, i, wall_start);
+
+        // Draw wall slice
+        SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255); // Gray wall color
+        SDL_RenderDrawLine(renderer, i, wall_start, i, wall_end);
+
+        // Draw ground
+        SDL_SetRenderDrawColor(renderer, ground_color.r, ground_color.g, ground_color.b, ground_color.a);
+        SDL_RenderDrawLine(renderer, i, wall_end, i, screen_height);
+    }
+}

@@ -1,7 +1,6 @@
 // event.c
 #include "../headers/event.h"
 
-
 void handle_events(SDL_Event *event, Player *player) {
     // Check if an event is a key press
     if (event->type == SDL_KEYDOWN) {
@@ -25,26 +24,3 @@ void handle_events(SDL_Event *event, Player *player) {
 }
 
 
-
-
-// void handle_events(SDL_Event *event, Player *player) {
-//     // Check if an event is a key press
-//     if (event->type == SDL_KEYDOWN) {
-//         switch (event->key.keysym.sym) {
-//             case SDLK_UP:
-//                 move_player(player, 0, -5); // Move player up
-//                 break;
-//             case SDLK_DOWN:
-//                 move_player(player, 0, 5); // Move player down
-//                 break;
-//             case SDLK_LEFT:
-//                 move_player(player, -5, 0); // Move player left
-//                 break;
-//             case SDLK_RIGHT:
-//                 move_player(player, 5, 0); // Move player right
-//                 break;
-//             default:
-//                 break;
-//         }
-//     }
-// }
